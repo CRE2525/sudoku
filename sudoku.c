@@ -3,6 +3,7 @@
 #include<string.h>
 
 void print_sudoku(int sudoku[9][9]){
+	//prints out sudoku in terminal
 	printf("The Sudoku contains:\n");
 	for (int x = 0; x < 9; x++){
   			for (int y = 0; y < 9; y++){
@@ -15,6 +16,7 @@ void print_sudoku(int sudoku[9][9]){
 
 int check_position(int x, int y, int num, int sudoku[9][9]){
 	
+	//checks to see if num at position x, y, in sudoku array is valid.
 	int i, j, k;
 	
 	for(i = 0; i < 9; i++){
@@ -55,6 +57,7 @@ int check_position(int x, int y, int num, int sudoku[9][9]){
 
 int epic_solver(int sudoku[9][9], int x, int y){
 
+	//Main recursive algorithim
 	int num = 1;
 	if(sudoku[x][y] == 0){
 		for(num = 1; num <= 9; num++){
@@ -108,6 +111,7 @@ int epic_solver(int sudoku[9][9], int x, int y){
 
 void solve_sudoku(int sudoku[9][9], int depth)
 {
+	//Checking if input is a valid sudoku before solving
 	int i = 0;
 	int j = 0;
 	int q = 0;
@@ -126,7 +130,8 @@ void solve_sudoku(int sudoku[9][9], int depth)
 }
 
 int main(){
-
+	
+	//Example Sudoku input
 	int Sudoku[9][9]={
 	{ 0,0,0,0,0,0,2,0,0 },
 	{ 0,8,0,0,0,7,0,9,0 },
