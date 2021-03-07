@@ -147,6 +147,6 @@ int main(){
 	printf("Original sudoku is:\n");
   	print_sudoku(Sudoku);
  	solve_sudoku(Sudoku, 0);
-  	printf("Solution is:\n");
+  	printf("Solved sudoku is:\n");
   	print_sudoku(Sudoku);
 }
