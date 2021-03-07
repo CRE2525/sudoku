@@ -131,7 +131,7 @@ void solve_sudoku(int sudoku[9][9], int depth)
 
 int main(){
 	
-	//Example Sudoku input
+	//Example Sudoku input. Edit this nested array to solve a sudoku.
 	int Sudoku[9][9]={
 	{ 0,0,0,0,0,0,2,0,0 },
 	{ 0,8,0,0,0,7,0,9,0 },
