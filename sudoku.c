@@ -2,151 +2,116 @@
 #include<stdlib.h>
 #include<string.h>
 
-void print_sudoku(int sudoku[9][9]){
-	//prints out sudoku in terminal
-	printf("The Sudoku contains:\n");
+/* Prints sudoku to terminal */
+void print_sudoku(int sudoku[9][9]) {
+	printf("The Sudoku contains:\n\n");
 	for (int x = 0; x < 9; x++){
-  			for (int y = 0; y < 9; y++){
-				printf("%d  ", sudoku[x][y]);
-    			}
-    			printf("\n");
-  		}
+		for (int y = 0; y < 9; y++)
+			printf("%d  ", sudoku[x][y]);
+		printf("\n");
+	}
 }
 
+/* Returns the beginning index for a 3x3 square */
+int getSquareIndex(int n) {
+    if (n <= 2)
+        return 0;
+    else if (n <= 5)
+        return 3;
+    return 6;
+}
 
-int check_position(int x, int y, int num, int sudoku[9][9]){
-	
-	//checks to see if num at position x, y, in sudoku array is valid.
-	int i, j, k;
-	
-	for(i = 0; i < 9; i++){
-		if(sudoku[x][i] == num){
+/* Returns 1 if value n at position x, y, in sudoku array is invalid. */
+int check_position(int x, int y, int n, int sudoku[9][9]){
+
+	/* Check if values in column and row */
+	for (int i = 0; i < 9; i++) {
+		if (sudoku[x][i] == n || sudoku[i][y] == n)
 			return 1;
-		}
-		if(sudoku[i][y] == num){
-			return 1;
-		}
 	}
 
-	if(x <= 2){
-		x = 0;
-	} else if(x <= 5){
-		x = 3;
-	} else {
-		x = 6;
-	}
+	/* Now check local square */
+	int xp, yp;
+	xp = getSquareIndex(x);
+	yp = getSquareIndex(y);
 
-	if(y <= 2){
-		y = 0;
-	} else if(y <= 5){
-		y = 3;
-	} else {
-		y = 6;
-	}
-
-	for(j = x; j < x + 3; j++){
-		for(k = y; k < y + 3; k++){
-			if(sudoku[j][k] == num){
+	for (int j = xp; j < xp + 3; j++){
+		for (int k = yp; k < yp + 3; k++){
+			if (sudoku[j][k] == n)
 				return 1;
-			}
 		}
 	}
+
 	return 0;
 }
 
 
-int epic_solver(int sudoku[9][9], int x, int y){
+/* Main recursive algorithim. */
+int recursive_solve(int sudoku[9][9], int x, int y){
 
-	//Main recursive algorithim
-	int num = 1;
-	if(sudoku[x][y] == 0){
-		for(num = 1; num <= 9; num++){
-			if(check_position(x, y, num, sudoku) == 0){
-
+	/* If this square is empty */
+	if (sudoku[x][y] == 0){
+		for (int num = 1; num <= 9; num++){
+			if (check_position(x, y, num, sudoku) == 0){
 				sudoku[x][y] = num;
-
-				if(x == 8 && y == 8){
+				if (x == 8 && y == 8)
 					return 1;
-				}
 
-				if(x < 8){
-					if(epic_solver(sudoku, x + 1, y) == 1){
-						return 1;
-					}
+				if (x < 8 && recursive_solve(sudoku, x + 1, y))
+					return 1;
 
-				} else if(x == 8){
-					if(epic_solver(sudoku, 0, y + 1) == 1){
-						return 1;
-					}
-				}
+				else if (x == 8 && recursive_solve(sudoku, 0, y + 1))
+					return 1;
 			}
 		}
 		sudoku[x][y] = 0;
 		return 0;
 	}
 
-	if(sudoku[x][y] != 0){
-
-		if((x == 8) && (y == 8)){
+	/* If this square is already a number, skip it. */
+	if (sudoku[x][y] != 0){
+		if (x == 8 && y == 8)
 			return 1;
-		}
 
-		if(x < 8){
-			if(epic_solver(sudoku, x + 1, y) == 1){
-				return 1;
-		} else {
-				return 0;
-			}
-		} else if(x == 8){
-			if(epic_solver(sudoku, 0, y + 1) == 1){
-				return 1;
-		} else {
-				return 0;
-			}
-		}
+		if (x < 8)
+			return recursive_solve(sudoku, x + 1, y);
+
+		return recursive_solve(sudoku, 0, y + 1);
 	}
-	return 0;
 }
 
-
-void solve_sudoku(int sudoku[9][9], int depth)
-{
-	//Checking if input is a valid sudoku before solving
-	int i = 0;
-	int j = 0;
-	int q = 0;
-
-	for(i = 0; i < 9; i++){
-		for(j = 0; j < 9; j++){
-			if((sudoku[i][j] != 0) && (check_position(i, j, sudoku[i][j], sudoku) == 0)){
-				q = 1;
-			}
+/* Checks if input is a valid sudoku, then solves  */
+void solve_sudoku(int sudoku[9][9], int depth) {
+	for (int i = 0; i < 9; i++){
+		for (int j = 0; j < 9; j++){
+			if (sudoku[i][j] != 0 && check_position(i, j, sudoku[i][j], sudoku) == 0)
+				return;
 		}
 	}
-
-	if(q == 0){
-		epic_solver(sudoku, 0, 0);
-	}
+	recursive_solve(sudoku, 0, 0);
 }
 
 int main(){
-	
-	//Example Sudoku input. Edit this nested array to solve a sudoku.
-	int Sudoku[9][9]={
-	{ 0,0,0,0,0,0,2,0,0 },
-	{ 0,8,0,0,0,7,0,9,0 },
-	{ 6,0,2,0,0,0,5,0,0 },
-	{ 0,7,0,0,6,0,0,0,0 },
-	{ 0,0,0,9,0,1,0,0,0 },
-	{ 0,0,0,0,2,0,0,4,0 },
-	{ 0,0,5,0,0,0,6,0,3 },
-	{ 0,9,0,4,0,0,0,7,0 },
-	{ 0,0,6,0,0,0,0,0,0 }
+
+	/* Example Sudoku input. Edit this nested array to solve a sudoku. */
+	/* Zeroes are empty spaces. */
+
+	int sudoku[9][9] = {
+		{ 0,0,0,0,0,0,2,0,0 },
+		{ 0,8,0,0,0,7,0,9,0 },
+		{ 6,0,2,0,0,0,5,0,0 },
+		{ 0,7,0,0,6,0,0,0,0 },
+		{ 0,0,0,9,0,1,0,0,0 },
+		{ 0,0,0,0,2,0,0,4,0 },
+		{ 0,0,5,0,0,0,6,0,3 },
+		{ 0,9,0,4,0,0,0,7,0 },
+		{ 0,0,6,0,0,0,0,0,0 }
 	};
 
-	printf("Original sudoku is:\n");
-  	print_sudoku(Sudoku);
- 	solve_sudoku(Sudoku, 0);
-  	printf("Solved sudoku is:\n");
-  	print_sudoku(Sudoku);
+	printf("\nOriginal sudoku is:\n\n");
+	print_sudoku(sudoku);
+ 	solve_sudoku(sudoku, 0);
+	printf("\n\nSolved sudoku is:\n\n");
+	print_sudoku(sudoku);
+	printf("\n");
 }
